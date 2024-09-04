@@ -29,13 +29,13 @@ public class SoundsMenu : MonoBehaviour
 
     public void ChangeMasterVolume()
     {
-        _currentMasterValue = ValueToVolume(_masterSlider.value);
+        _currentMasterValue = ConvertValueToVolume(_masterSlider.value);
 
         if (_musicOn)
             _mixerGroup.audioMixer.SetFloat(MasterVolume, _currentMasterValue);
     }
 
-    public float ValueToVolume(float value)
+    public float ConvertValueToVolume(float value)
     {
         int coefficient = 20;
 
