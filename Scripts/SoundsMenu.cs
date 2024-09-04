@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.UI;
 
 public class SoundsMenu : MonoBehaviour
 {
@@ -8,9 +9,15 @@ public class SoundsMenu : MonoBehaviour
     private const string EffectsVolume = nameof(EffectsVolume);
 
     [SerializeField] private AudioMixerGroup _mixerGroup;
+    [SerializeField] private Slider _masterSlider;
 
     private bool _musicOn = true;
     private float _currentMasterValue = 0;
+
+    private void Start()
+    {
+        _masterSlider.onValueChanged.AddListener(delegate { ChangeMasterVolume(); });
+    }
 
     public void ToggleMusic(bool enable)
     {
@@ -20,22 +27,12 @@ public class SoundsMenu : MonoBehaviour
         _mixerGroup.audioMixer.SetFloat(MasterVolume, enable ? _currentMasterValue : minMasterValue);
     }
 
-    public void ChangeMasterVolume(float masterValue)
+    public void ChangeMasterVolume()
     {
-        _currentMasterValue = ValueToVolume(masterValue);
+        _currentMasterValue = ValueToVolume(_masterSlider.value);
 
         if (_musicOn)
             _mixerGroup.audioMixer.SetFloat(MasterVolume, _currentMasterValue);
-    }
-
-    public void ChangeMusicVolume(float musicValue)
-    {
-        _mixerGroup.audioMixer.SetFloat(MusicVolume, ValueToVolume(musicValue));
-    }
-
-    public void ChangeEffectsVolume(float effectsValue)
-    {
-        _mixerGroup.audioMixer.SetFloat(EffectsVolume, ValueToVolume(effectsValue));
     }
 
     public float ValueToVolume(float value)
