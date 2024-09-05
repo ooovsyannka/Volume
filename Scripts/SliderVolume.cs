@@ -6,18 +6,33 @@ using UnityEngine.UI;
 
 public class SliderVolume : MonoBehaviour
 {
+    private const int Coefficient = 20;
+    private const int MinValueSound = -80;
+
     [SerializeField] private AudioMixerGroup _mixerGroup;
-    
+
     private Slider _slider;
 
-    private void Start()
+    private void Awake()
     {
         _slider = GetComponent<Slider>();
-        _slider.onValueChanged.AddListener(delegate { ChangeVolue(); });
     }
 
-    public void ChangeVolue()
+    private void OnEnable()
     {
-        _mixerGroup.audioMixer.SetFloat(_slider.name, Mathf.Log10(_slider.value) * 20);
+        _slider.onValueChanged.AddListener(ChangeVolue);
+    }
+
+    private void OnDisable()
+    {
+        _slider.onValueChanged.RemoveListener(ChangeVolue);
+    }
+
+    private void ChangeVolue(float value)
+    {
+        if (value > 0)
+            _mixerGroup.audioMixer.SetFloat(_mixerGroup.name, Mathf.Log10(value) * Coefficient);
+        else
+            _mixerGroup.audioMixer.SetFloat(_mixerGroup.name, MinValueSound);
     }
 }
